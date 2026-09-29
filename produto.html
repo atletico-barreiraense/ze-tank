@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smartphone Samsung Galaxy S23 5G - ComparaTudo</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <!-- HEADER / CABEÇALHO -->
+    <header class="bg-blue-600 text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="text-2xl font-black tracking-wider cursor-pointer">
+                <a href="index.html">COMPARA<span class="text-yellow-400">TUDO</span></a>
+            </div>
+            <div class="w-full md:w-1/2 relative">
+                <input type="text" placeholder="Buscar produto, marca ou loja..." class="w-full py-2 px-4 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                <button class="absolute right-1 top-1/2 -translate-y-1/2 bg-yellow-400 text-blue-900 px-4 py-1.5 rounded-md font-bold hover:bg-yellow-300 transition">
+                    Buscar
+                </button>
+            </div>
+            <div class="text-sm font-medium flex gap-4">
+                <a href="#" class="hover:underline">Histórico de Preços</a>
+                <a href="#" class="hover:underline">Favoritos</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="container mx-auto px-4 py-8">
+        
+        <!-- Breadcrumb (Caminho) -->
+        <nav class="text-xs text-gray-500 mb-4">
+            <a href="index.html" class="hover:underline">Home</a> > 
+            <a href="#" class="hover:underline">Celulares e Smartphones</a> > 
+            <span class="text-gray-800">Samsung Galaxy S23</span>
+        </nav>
+
+        <!-- SEÇÃO DO PRODUTO (TOPO) -->
+        <div class="bg-white rounded-2xl shadow-md p-6 grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <!-- Foto do Produto -->
+            <div class="h-72 bg-gray-200 rounded-xl flex items-center justify-center">
+                <span class="text-gray-400 font-medium">Foto Grande do Produto</span>
+            </div>
+
+            <!-- Informações Principais -->
+            <div class="md:col-span-2 flex flex-col justify-between">
+                <div>
+                    <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-1 rounded">Menor preço garantido</span>
+                    <h1 class="text-2xl font-black text-gray-800 mt-2">Smartphone Samsung Galaxy S23 5G 128GB Câmera Tripla</h1>
+                    <p class="text-sm text-gray-500 mt-1">Vendido por 5 lojas diferentes</p>
+                </div>
+
+                <div class="border-t border-b border-gray-100 py-4 my-4">
+                    <p class="text-xs text-gray-500">Melhor preço encontrado:</p>
+                    <div class="flex items-baseline gap-3">
+                        <span class="text-3xl font-black text-green-600">R$ 3.899,00</span>
+                        <span class="text-sm text-gray-400 line-through">R$ 4.599,00</span>
+                    </div>
+                    <p class="text-xs text-green-600 font-semibold mt-1">✔ Menor preço dos últimos 30 dias</p>
+                </div>
+
+                <div class="flex gap-4">
+                    <a href="#lojas" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition text-center">
+                        Ver todas as ofertas
+                    </a>
+                    <button class="border border-gray-300 text-gray-700 px-4 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">
+                        🤍 Favoritar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- LISTA DE LOJAS (O COMPARADOR DE PREÇOS) -->
+        <div id="lojas" class="bg-white rounded-2xl shadow-md p-6 mb-8">
+            <h2 class="text-lg font-bold text-gray-800 mb-6">Ofertas em Lojas Confiáveis</h2>
+
+            <div class="flex flex-col gap-4">
+                
+                <!-- LOJA 1 (A MAIS BARATA) -->
+                <div class="flex flex-col sm:flex-row items-center justify-between border-2 border-green-500 bg-green-50/30 p-4 rounded-xl gap-4">
+                    <div class="flex items-center gap-4 w-full sm:w-auto">
+                        <div class="w-24 h-10 bg-gray-300 rounded flex items-center justify-center font-bold text-xs text-gray-600">
+                            LOGO LOJA
+                        </div>
+                        <div>
+                            <span class="bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">Melhor Preço</span>
+                            <h3 class="font-bold text-gray-800 mt-1">Magazine Luiza</h3>
+                            <p class="text-xs text-gray-500">Frete: <span class="text-green-600 font-semibold">Grátis</span></p>
+                        </div>
+                    </div>
+
+                    <div class="text-center sm:text-right w-full sm:w-auto">
+                        <span class="text-xs text-gray-500 block">À vista no Pix</span>
+                        <span class="text-2xl font-black text-gray-800">R$ 3.899,00</span>
+                    </div>
+
+                    <a href="#" target="_blank" class="w-full sm:w-auto bg-green-600 text-white text-center px-6 py-3 rounded-xl font-bold hover:bg-green-700 transition shadow-md">
+                        Ir para a Loja ➔
+                    </a>
+                </div>
+
+                <!-- LOJA 2 -->
+                <div class="flex flex-col sm:flex-row items-center justify-between border border-gray-200 bg-white p-4 rounded-xl gap-4 hover:shadow-md transition">
+                    <div class="flex items-center gap-4 w-full sm:w-auto">
+                        <div class="w-24 h-10 bg-gray-300 rounded flex items-center justify-center font-bold text-xs text-gray-600">
+                            LOGO LOJA
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800">Americanas</h3>
+                            <p class="text-xs text-gray-500">Frete: R$ 15,90</p>
+                        </div>
+                    </div>
+
+                    <div class="text-center sm:text-right w-full sm:w-auto">
+                        <span class="text-xs text-gray-500 block">À vista no Pix</span>
+                        <span class="text-xl font-bold text-gray-800">R$ 3.999,00</span>
+                    </div>
+
+                    <a href="#" target="_blank" class="w-full sm:w-auto bg-blue-600 text-white text-center px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition">
+                        Ir para a Loja ➔
+                    </a>
+                </div>
+
+                <!-- LOJA 3 -->
+                <div class="flex flex-col sm:flex-row items-center justify-between border border-gray-200 bg-white p-4 rounded-xl gap-4 hover:shadow-md transition">
+                    <div class="flex items-center gap-4 w-full sm:w-auto">
+                        <div class="w-24 h-10 bg-gray-300 rounded flex items-center justify-center font-bold text-xs text-gray-600">
+                            LOGO LOJA
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800">Mercado Livre</h3>
+                            <p class="text-xs text-gray-500">Frete: <span class="text-green-600 font-semibold">Grátis (Full)</span></p>
+                        </div>
+                    </div>
+
+                    <div class="text-center sm:text-right w-full sm:w-auto">
+                        <span class="text-xs text-gray-500 block">À vista no Pix</span>
+                        <span class="text-xl font-bold text-gray-800">R$ 4.099,00</span>
+                    </div>
+
+                    <a href="#" target="_blank" class="w-full sm:w-auto bg-blue-600 text-white text-center px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition">
+                        Ir para a Loja ➔
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- HISTÓRICO DE PREÇOS (VISUAL) -->
+        <div class="bg-white rounded-2xl shadow-md p-6">
+            <h2 class="text-lg font-bold text-gray-800 mb-2">Histórico de Preços</h2>
+            <p class="text-xs text-gray-500 mb-6">Acompanhe a variação de preço deste produto nos últimos 6 meses.</p>
+            
+            <!-- Simulação visual de gráfico -->
+            <div class="h-40 bg-gray-50 border border-dashed border-gray-300 rounded-xl flex items-center justify-center">
+                <span class="text-gray-400 text-sm font-medium">📊 [Aqui entrará um gráfico de linhas interativo no futuro]</span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t mt-12 py-6 text-center text-gray-500 text-sm">
+        <p>&copy; 2026 CompraTudo. Projeto de Comparador de Preços.</p>
+    </footer>
+
+</body>
+</html>
