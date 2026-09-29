@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparador Lado a Lado — CompraTudo</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonte -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Estilos e Animações (Unificados) -->
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+        @keyframes pageIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .page-transition {
+            animation: pageIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased pb-20 page-transition">
+
+    <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
+        <div class="container mx-auto px-4 h-20 flex items-center justify-between">
+            <a href="index.html" class="text-xl font-black tracking-tight flex items-center gap-2">
+                <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg">⚡</div>
+                <span>COMPARA<span class="text-blue-500">TUDO</span></span>
+            </a>
+            <a href="index.html" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs transition border border-slate-800 active:scale-95">← Voltar para Home</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-10 max-w-5xl">
+        <div class="mb-8 text-center">
+            <span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-bold px-3 py-1 rounded-full uppercase">Ferramenta Exclusiva</span>
+            <h1 class="text-3xl font-black text-white mt-3">Comparação Lado a Lado</h1>
+            <p class="text-slate-400 text-sm mt-1">Selecione dois produtos para analisar as diferenças de preço e especificações.</p>
+        </div>
+
+        <!-- SELETORES -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl">
+                <label class="block text-xs font-bold text-slate-400 mb-2">Produto 1</label>
+                <select id="select1" onchange="updateComparison()" class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs text-white focus:outline-none focus:border-blue-500 font-bold cursor-pointer">
+                    <option value="s23">Galaxy S23 5G</option>
+                    <option value="dell">Notebook Dell Inspiron</option>
+                    <option value="tv">Smart TV 50" Samsung</option>
+                    <option value="ps5">PlayStation 5 Slim</option>
+                </select>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl">
+                <label class="block text-xs font-bold text-slate-400 mb-2">Produto 2</label>
+                <select id="select2" onchange="updateComparison()" class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs text-white focus:outline-none focus:border-blue-500 font-bold cursor-pointer">
+                    <option value="iphone">iPhone 15</option>
+                    <option value="macbook">MacBook Air M1</option>
+                    <option value="s23">Galaxy S23 5G</option>
+                    <option value="ps5">PlayStation 5 Slim</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- TABELA DE COMPARAÇÃO -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+            <div class="grid grid-cols-2 divide-x divide-slate-800 p-6 md:p-8 text-center">
+                <!-- Coluna 1 -->
+                <div class="space-y-4 px-2">
+                    <div class="w-32 h-32 bg-slate-950 rounded-2xl mx-auto border border-slate-800 overflow-hidden flex items-center justify-center">
+                        <img id="img1" src="" class="w-full h-full object-cover opacity-90">
+                    </div>
+                    <h3 id="name1" class="font-bold text-sm md:text-base text-white"></h3>
+                    <p id="price1" class="text-xl md:text-2xl font-black text-emerald-400"></p>
+                    <a id="link1" href="#" class="inline-block bg-blue-600 hover:bg-blue-500 active:scale-95 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition shadow-md shadow-blue-600/30">Ver Ofertas</a>
+                </div>
+                <!-- Coluna 2 -->
+                <div class="space-y-4 px-2">
+                    <div class="w-32 h-32 bg-slate-950 rounded-2xl mx-auto border border-slate-800 overflow-hidden flex items-center justify-center">
+                        <img id="img2" src="" class="w-full h-full object-cover opacity-90">
+                    </div>
+                    <h3 id="name2" class="font-bold text-sm md:text-base text-white"></h3>
+                    <p id="price2" class="text-xl md:text-2xl font-black text-emerald-400"></p>
+                    <a id="link2" href="#" class="inline-block bg-blue-600 hover:bg-blue-500 active:scale-95 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition shadow-md shadow-blue-600/30">Ver Ofertas</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const db = {
+            's23': { name: 'Galaxy S23 5G 128GB', price: 'R$ 3.899,00', img: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=500&q=80', id: 's23' },
+            'dell': { name: 'Notebook Dell Inspiron 15', price: 'R$ 3.199,00', img: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=500&q=80', id: 'dell' },
+            'tv': { name: 'Smart TV 50" 4K Samsung', price: 'R$ 2.239,00', img: 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&w=500&q=80', id: 'tv' },
+            'ps5': { name: 'PlayStation 5 Slim 1TB', price: 'R$ 3.699,00', img: 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=500&q=80', id: 'ps5' },
+            'iphone': { name: 'iPhone 15 128GB Preto', price: 'R$ 4.799,00', img: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=500&q=80', id: 'iphone' },
+            'macbook': { name: 'MacBook Air M1 256GB', price: 'R$ 6.299,00', img: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=500&q=80', id: 'macbook' }
+        };
+
+        function updateComparison() {
+            const p1 = db[document.getElementById('select1').value];
+            const p2 = db[document.getElementById('select2').value];
+
+            document.getElementById('img1').src = p1.img;
+            document.getElementById('name1').innerText = p1.name;
+            document.getElementById('price1').innerText = p1.price;
+            document.getElementById('link1').href = `produto.html?id=${p1.id}`;
+
+            document.getElementById('img2').src = p2.img;
+            document.getElementById('name2').innerText = p2.name;
+            document.getElementById('price2').innerText = p2.price;
+            document.getElementById('link2').href = `produto.html?id=${p2.id}`;
+        }
+
+        updateComparison();
+    </script>
+</body>
+</html>

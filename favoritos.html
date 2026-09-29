@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Favoritos — CompraTudo</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonte -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Estilos e Animações -->
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+        @keyframes pageIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .page-transition {
+            animation: pageIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased page-transition pb-20">
+
+    <!-- HEADER -->
+    <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
+        <div class="container mx-auto px-4 h-20 flex items-center justify-between">
+            <a href="index.html" class="text-xl font-black tracking-tight flex items-center gap-2">
+                <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg">⚡</div>
+                <span>COMPARA<span class="text-blue-500">TUDO</span></span>
+            </a>
+            <a href="index.html" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs transition border border-slate-800 active:scale-95">
+                ← Voltar para a Home
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-10 max-w-6xl">
+        <div class="mb-8">
+            <h1 class="text-3xl font-black text-white">Meus Produtos Favoritos 🤍</h1>
+            <p class="text-slate-400 text-sm mt-1">Acompanhe rapidamente os itens que você salvou para monitorar.</p>
+        </div>
+
+        <!-- Onde os favoritos salvos vão aparecer -->
+        <div id="favoritesList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Inserido via JavaScript -->
+        </div>
+
+        <!-- Estado vazio -->
+        <div id="emptyFavorites" class="hidden text-center py-20">
+            <div class="w-16 h-16 bg-slate-900 border border-slate-800 rounded-3xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner">📂</div>
+            <p class="text-white font-bold text-base">Sua lista de favoritos está vazia.</p>
+            <p class="text-slate-400 text-xs mt-1">Clique no coraçãozinho nos produtos da página inicial para salvá-los aqui!</p>
+            <a href="index.html" class="inline-block mt-6 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold px-6 py-3 rounded-xl text-xs transition shadow-lg shadow-blue-600/30">Explorar Produtos</a>
+        </div>
+    </main>
+
+    <script>
+        const favoritesList = document.getElementById('favoritesList');
+        const emptyFavorites = document.getElementById('emptyFavorites');
+        
+        const allProductsData = {
+            's23': { name: 'Smartphone Samsung Galaxy S23 5G 128GB Câmera Tripla', price: 'R$ 3.899,00', discount: '-15% OFF', link: 'produto.html?id=s23', img: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=500&q=80' },
+            'dell': { name: 'Notebook Dell Inspiron 15 Core i5 8GB SSD 256GB', price: 'R$ 3.199,00', discount: '', link: 'produto.html?id=dell', img: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=500&q=80' },
+            'tv': { name: 'Smart TV 50" Crystal UHD 4K Samsung', price: 'R$ 2.239,00', discount: '-20% OFF', link: 'produto.html?id=tv', img: 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&w=500&q=80' },
+            'ps5': { name: 'Console Sony PlayStation 5 Slim 1TB', price: 'R$ 3.699,00', discount: '', link: 'produto.html?id=ps5', img: 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=500&q=80' }
+        };
+
+        let savedFavs = JSON.parse(localStorage.getItem('compraTudoFavs')) || [];
+
+        if (savedFavs.length === 0) {
+            emptyFavorites.classList.remove('hidden');
+        } else {
+            savedFavs.forEach(id => {
+                const prod = allProductsData[id];
+                if (prod) {
+                    favoritesList.innerHTML += `
+                        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 flex flex-col justify-between hover:border-blue-500/50 transition shadow-xl">
+                            <div>
+                                <div class="h-44 bg-slate-950 rounded-2xl flex items-center justify-center relative mb-3 overflow-hidden border border-slate-800">
+                                    <img src="${prod.img}" alt="${prod.name}" class="w-full h-full object-cover opacity-90">
+                                    ${prod.discount ? `<span class="absolute top-2 left-2 bg-rose-500 text-white text-[10px] px-2.5 py-1 rounded-xl font-extrabold">${prod.discount}</span>` : ''}
+                                </div>
+                                <h3 class="font-bold text-xs text-white line-clamp-2 mb-2">${prod.name}</h3>
+                                <p class="text-[10px] text-slate-400">A partir de:</p>
+                                <p class="text-lg font-black text-emerald-400">${prod.price}</p>
+                            </div>
+                            <div class="mt-4 flex gap-2">
+                                <a href="${prod.link}" class="flex-1 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white text-center py-2.5 rounded-xl font-bold text-xs transition shadow-md shadow-blue-600/30">Ver Ofertas</a>
+                                <button onclick="removeFav('${id}')" class="bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 px-3 py-2.5 rounded-xl text-xs transition border border-slate-700">❌</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        function removeFav(id) {
+            savedFavs = savedFavs.filter(item => item !== id);
+            localStorage.setItem('compraTudoFavs', JSON.stringify(savedFavs));
+            location.reload();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CompraTudo — Comparador Inteligente de Preços</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* ANIMAÇÕES DE TRANSIÇÃO SUAVES */
+        @keyframes pageIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .page-transition {
+            animation: pageIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes cardPop {
+            from { opacity: 0; transform: scale(0.96) translateY(8px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .card-animate {
+            animation: cardPop 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased pb-24 md:pb-12 selection:bg-blue-500 selection:text-white page-transition">
+
+    <!-- TOAST DE NOTIFICAÇÃO -->
+    <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 md:top-auto md:bottom-6 md:left-auto md:right-6 md:translate-x-0 z-50 transform -translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 border border-slate-700 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 w-[90%] md:w-auto">
+        <span id="toastIcon" class="text-xl">✨</span>
+        <p id="toastText" class="text-xs font-bold">Ação realizada!</p>
+    </div>
+
+    <!-- CABEÇALHO -->
+    <header class="bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/80 sticky top-0 z-40 transition-all">
+        <div class="container mx-auto px-4 h-16 md:h-20 flex items-center justify-between gap-4">
+            <a href="index.html" class="text-lg md:text-xl font-black tracking-tight flex items-center gap-2 group">
+                <div class="w-9 h-9 md:w-10 md:h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-600/30 group-hover:scale-110 transition duration-300">⚡</div>
+                <span>COMPARA<span class="text-blue-500">TUDO</span></span>
+            </a>
+
+            <div class="hidden md:flex flex-1 max-w-lg relative">
+                <input type="text" id="searchInput" placeholder="O que você deseja comparar hoje?" class="w-full h-12 pl-12 pr-4 rounded-2xl bg-slate-900 border border-slate-800 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-inner">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">🔍</span>
+            </div>
+
+            <div class="hidden md:flex items-center gap-3">
+                <a href="comparar.html" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs transition border border-slate-800 active:scale-95 duration-200">⚖️ Comparador</a>
+                <a href="historico.html" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs transition border border-slate-800 active:scale-95 duration-200">📈 Histórico</a>
+                <a href="favoritos.html" class="relative flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs transition border border-slate-800 active:scale-95 duration-200">
+                    <span>🤍</span> Favoritos
+                    <span id="favBadge" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+                </a>
+            </div>
+
+            <button onclick="toggleMobileSearch()" class="md:hidden w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-slate-300 border border-slate-800 active:scale-90 transition duration-200">🔍</button>
+        </div>
+    </header>
+
+    <!-- BUSCA MOBILE -->
+    <div id="mobileSearchBox" class="md:hidden bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-4 py-3 hidden page-transition">
+        <div class="relative">
+            <input type="text" id="searchInputMobile" placeholder="Pesquisar produto ou marca..." class="w-full h-11 pl-11 pr-4 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">🔍</span>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <main class="container mx-auto px-4 py-6 md:py-8">
+        
+        <!-- HERO BANNER -->
+        <div class="relative rounded-3xl bg-gradient-to-br from-blue-600 via-indigo-700 to-slate-950 p-6 md:p-10 mb-8 text-white shadow-2xl overflow-hidden flex flex-col md:flex-row justify-between items-center gap-6 border border-blue-500/20">
+            <div class="absolute -right-20 -top-20 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="max-w-xl z-10">
+                <span class="bg-amber-400/10 border border-amber-400/30 text-amber-300 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">⚡ Inteligência de Preços</span>
+                <h1 class="text-2xl md:text-4xl font-black mt-3 tracking-tight leading-tight">O menor preço da internet, em tempo real.</h1>
+                <p class="text-blue-100/80 text-xs md:text-sm mt-2 leading-relaxed">Monitore variações de valores nas principais lojas oficiais com um clique.</p>
+            </div>
+            <div class="w-full md:w-auto bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-2xl text-center z-10">
+                <p class="text-[11px] text-blue-200 font-medium">Produtos Monitorados</p>
+                <p class="text-2xl font-black mt-0.5 text-amber-300">4.820+</p>
+            </div>
+        </div>
+
+        <!-- CATEGORIAS -->
+        <div class="flex gap-2 overflow-x-auto pb-3 mb-6 no-scrollbar">
+            <button onclick="filterCat('todos', this)" class="cat-btn active px-4 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs whitespace-nowrap transition-all shadow-lg shadow-blue-600/30 active:scale-95 duration-200">🔥 Todos</button>
+            <button onclick="filterCat('celular', this)" class="cat-btn px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-semibold text-xs whitespace-nowrap transition-all border border-slate-800 active:scale-95 duration-200">📱 Celulares</button>
+            <button onclick="filterCat('notebook', this)" class="cat-btn px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-semibold text-xs whitespace-nowrap transition-all border border-slate-800 active:scale-95 duration-200">💻 Notebooks</button>
+            <button onclick="filterCat('tv', this)" class="cat-btn px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-semibold text-xs whitespace-nowrap transition-all border border-slate-800 active:scale-95 duration-200">📺 Smart TVs</button>
+            <button onclick="filterCat('game', this)" class="cat-btn px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-semibold text-xs whitespace-nowrap transition-all border border-slate-800 active:scale-95 duration-200">🎮 Consoles</button>
+        </div>
+
+        <!-- GRID DE PRODUTOS -->
+        <div id="productGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            <!-- Renderizado via JS -->
+        </div>
+
+        <!-- ESTADO VAZIO -->
+        <div id="noResult" class="hidden text-center py-20 page-transition">
+            <p class="text-4xl mb-2">🔍</p>
+            <p class="text-slate-200 font-bold text-sm">Nenhum produto encontrado</p>
+            <p class="text-slate-500 text-xs mt-1">Tente buscar por outro termo.</p>
+        </div>
+    </main>
+
+    <!-- MENU INFERIOR MOBILE -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-950/95 backdrop-blur-xl border-t border-slate-800/80 py-2.5 px-6 flex justify-between items-center z-50 shadow-2xl">
+        <a href="index.html" class="flex flex-col items-center text-blue-500 gap-1 active:scale-90 transition duration-200">
+            <span class="text-lg">🏠</span>
+            <span class="text-[10px] font-bold">Home</span>
+        </a>
+        <a href="comparar.html" class="flex flex-col items-center text-slate-400 hover:text-white gap-1 transition duration-200 active:scale-90">
+            <span class="text-lg">⚖️</span>
+            <span class="text-[10px] font-medium">Comparar</span>
+        </a>
+        <a href="historico.html" class="flex flex-col items-center text-slate-400 hover:text-white gap-1 transition duration-200 active:scale-90">
+            <span class="text-lg">📈</span>
+            <span class="text-[10px] font-medium">Histórico</span>
+        </a>
+        <a href="favoritos.html" class="flex flex-col items-center text-slate-400 hover:text-white gap-1 transition duration-200 relative active:scale-90">
+            <span class="text-lg">🤍</span>
+            <span class="text-[10px] font-medium">Favoritos</span>
+            <span id="favBadgeMobile" class="absolute -top-1 right-2 bg-rose-500 text-white text-[9px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center hidden">0</span>
+        </a>
+    </nav>
+
+    <!-- SCRIPT COM TRANSIÇÕES FLUIDAS -->
+    <script>
+        const products = [
+            { id: 's23', name: 'Smartphone Samsung Galaxy S23 5G 128GB', category: 'celular', price: 'R$ 3.899,00', oldPrice: 'R$ 4.599,00', discount: '-15%', stores: 5, rating: 5, reviews: 128, img: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=500&q=80' },
+            { id: 'dell', name: 'Notebook Dell Inspiron 15 Core i5 8GB SSD 256GB', category: 'notebook', price: 'R$ 3.199,00', oldPrice: '', discount: '', stores: 3, rating: 4, reviews: 45, img: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=500&q=80' },
+            { id: 'tv', name: 'Smart TV 50" Crystal UHD 4K Samsung', category: 'tv', price: 'R$ 2.239,00', oldPrice: 'R$ 2.799,00', discount: '-20%', stores: 8, rating: 5, reviews: 310, img: 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&w=500&q=80' },
+            { id: 'ps5', name: 'Console Sony PlayStation 5 Slim 1TB', category: 'game', price: 'R$ 3.699,00', oldPrice: '', discount: '', stores: 4, rating: 5, reviews: 89, img: 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=500&q=80' },
+            { id: 'iphone', name: 'Smartphone Apple iPhone 15 128GB Preto', category: 'celular', price: 'R$ 4.799,00', oldPrice: 'R$ 5.499,00', discount: '-12%', stores: 6, rating: 5, reviews: 215, img: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=500&q=80' },
+            { id: 'macbook', name: 'Notebook Apple MacBook Air M1 256GB', category: 'notebook', price: 'R$ 6.299,00', oldPrice: 'R$ 7.299,00', discount: '-14%', stores: 4, rating: 5, reviews: 92, img: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=500&q=80' }
+        ];
+
+        let favorites = JSON.parse(localStorage.getItem('compraTudoFavs')) || [];
+        let activeCategory = 'todos';
+
+        function renderProducts(items) {
+            const grid = document.getElementById('productGrid');
+            const noResult = document.getElementById('noResult');
+            grid.innerHTML = '';
+
+            if (items.length === 0) {
+                noResult.classList.remove('hidden');
+                return;
+            }
+            noResult.classList.add('hidden');
+
+            items.forEach((p, index) => {
+                const isFav = favorites.includes(p.id);
+                // Atraso escalonado para animação em cascata (stagger effect)
+                const delay = index * 0.05;
+                grid.innerHTML += `
+                    <div class="card-animate bg-slate-900/90 border border-slate-800/80 rounded-3xl p-3.5 md:p-4 flex flex-col justify-between hover:border-blue-500/50 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group" style="animation-delay: ${delay}s">
+                        <div>
+                            <div class="h-40 md:h-48 bg-slate-950 rounded-2xl flex items-center justify-center relative mb-3.5 overflow-hidden border border-slate-800/50">
+                                <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700 ease-out opacity-90 group-hover:opacity-100">
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent"></div>
+                                ${p.discount ? `<span class="absolute top-2.5 left-2.5 bg-gradient-to-r from-rose-500 to-pink-600 text-white text-[9px] md:text-[10px] font-extrabold px-2.5 py-1 rounded-xl shadow-lg">${p.discount}</span>` : ''}
+                                <button onclick="toggleFav('${p.id}')" class="absolute top-2.5 right-2.5 w-8 h-8 md:w-9 md:h-9 bg-slate-900/80 backdrop-blur-md hover:bg-slate-800 rounded-xl flex items-center justify-center text-xs transition border border-slate-700/80 active:scale-75 duration-200 shadow-md">
+                                    ${isFav ? '❤️' : '🤍'}
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-1 text-amber-400 text-[10px] md:text-xs mb-1.5 font-semibold">
+                                ${'★'.repeat(p.rating)}<span class="text-slate-500 text-[9px] md:text-[10px] ml-1 font-medium">(${p.reviews})</span>
+                            </div>
+                            <h3 class="text-white font-bold text-xs md:text-sm leading-snug line-clamp-2 group-hover:text-blue-400 transition-colors mb-2">${p.name}</h3>
+                            ${p.oldPrice ? `<p class="text-slate-500 text-[10px] md:text-[11px] line-through">${p.oldPrice}</p>` : '<p class="text-slate-500 text-[10px] md:text-[11px] opacity-0">.</p>'}
+                            <p class="text-[10px] md:text-xs text-slate-400 mt-0.5">A partir de:</p>
+                            <p class="text-base md:text-xl font-black text-emerald-400 tracking-tight">${p.price}</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between">
+                            <span class="text-[10px] md:text-[11px] text-slate-400 font-semibold">${p.stores} lojas</span>
+                            <a href="produto.html?id=${p.id}" class="bg-blue-600 hover:bg-blue-500 active:scale-95 text-white px-3.5 md:px-4 py-2 rounded-xl font-extrabold text-[11px] md:text-xs transition-all duration-200 shadow-md shadow-blue-600/30">
+                                Ver Lojas →
+                            </a>
+                        </div>
+                    </div>
+                `;
+            });
+            updateFavBadges();
+        }
+
+        function toggleFav(id) {
+            const index = favorites.indexOf(id);
+            if (index > -1) {
+                favorites.splice(index, 1);
+                showToast('Removido dos favoritos', '🗑️');
+            } else {
+                favorites.push(id);
+                showToast('Adicionado aos favoritos!', '💖');
+            }
+            localStorage.setItem('compraTudoFavs', JSON.stringify(favorites));
+            filterAndSearch();
+        }
+
+        function updateFavBadges() {
+            const badge = document.getElementById('favBadge');
+            const badgeMob = document.getElementById('favBadgeMobile');
+            if (badge) {
+                badge.innerText = favorites.length;
+                badge.classList.toggle('hidden', favorites.length === 0);
+            }
+            if (badgeMob) {
+                badgeMob.innerText = favorites.length;
+                badgeMob.classList.toggle('hidden', favorites.length === 0);
+            }
+        }
+
+        function showToast(text, icon) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastText').innerText = text;
+            document.getElementById('toastIcon').innerText = icon;
+            toast.classList.remove('-translate-y-20', 'opacity-0');
+            setTimeout(() => toast.classList.add('-translate-y-20', 'opacity-0'), 2500);
+        }
+
+        function toggleMobileSearch() {
+            const box = document.getElementById('mobileSearchBox');
+            box.classList.toggle('hidden');
+            if(!box.classList.contains('hidden')) {
+                document.getElementById('searchInputMobile').focus();
+            }
+        }
+
+        function filterCat(cat, btn) {
+            activeCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.classList.remove('bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-600/30');
+                b.classList.add('bg-slate-900', 'text-slate-300', 'border', 'border-slate-800');
+            });
+            btn.classList.remove('bg-slate-900', 'text-slate-300', 'border', 'border-slate-800');
+            btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-600/30');
+            filterAndSearch();
+        }
+
+        function filterAndSearch() {
+            const queryDesk = document.getElementById('searchInput') ? document.getElementById('searchInput').value.toLowerCase().trim() : '';
+            const queryMob = document.getElementById('searchInputMobile') ? document.getElementById('searchInputMobile').value.toLowerCase().trim() : '';
+            const query = queryDesk || queryMob;
+
+            const filtered = products.filter(p => {
+                const matchesCat = activeCategory === 'todos' || p.category === activeCategory;
+                const matchesQuery = p.name.toLowerCase().includes(query);
+                return matchesCat && matchesQuery;
+            });
+            renderProducts(filtered);
+        }
+
+        if(document.getElementById('searchInput')) document.getElementById('searchInput').addEventListener('input', filterAndSearch);
+        if(document.getElementById('searchInputMobile')) document.getElementById('searchInputMobile').addEventListener('input', filterAndSearch);
+
+        renderProducts(products);
+    </script>
+</body>
+</html>

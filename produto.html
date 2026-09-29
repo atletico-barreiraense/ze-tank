@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Comparar Ofertas — CompraTudo</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonte -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Estilos e Animações Unificados -->
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+        @keyframes pageIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .page-transition {
+            animation: pageIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased page-transition pb-20">
+
+    <!-- HEADER -->
+    <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
+        <div class="container mx-auto px-4 h-20 flex items-center justify-between">
+            <a href="index.html" class="text-xl font-black tracking-tight flex items-center gap-2">
+                <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg">⚡</div>
+                <span>COMPARA<span class="text-blue-500">TUDO</span></span>
+            </a>
+            <a href="index.html" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs transition border border-slate-800 active:scale-95">
+                ← Voltar para a Home
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-10 max-w-5xl">
+        
+        <!-- BREADCRUMB -->
+        <nav class="text-xs text-slate-400 mb-6 flex items-center gap-2">
+            <a href="index.html" class="hover:text-white transition">Home</a> 
+            <span>/</span> 
+            <span id="breadcrumbCat" class="text-slate-200 font-semibold">Ofertas</span>
+        </nav>
+
+        <!-- SEÇÃO DO PRODUTO (TOPO) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-8 mb-10 shadow-xl">
+            <!-- Imagem -->
+            <div class="h-64 bg-slate-950 rounded-2xl border border-slate-800/80 flex items-center justify-center relative overflow-hidden">
+                <span class="text-slate-500 text-xs font-medium">Foto Oficial do Produto</span>
+                <span id="productBadge" class="absolute top-4 left-4 bg-rose-500 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-xl hidden"></span>
+            </div>
+
+            <!-- Detalhes -->
+            <div class="md:col-span-2 flex flex-col justify-between">
+                <div>
+                    <span class="text-[10px] uppercase font-bold tracking-wider text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-lg inline-block mb-3">Menor Preço Verificado</span>
+                    <h1 id="productName" class="text-2xl md:text-3xl font-black text-white leading-tight">Carregando produto...</h1>
+                    <p class="text-xs text-slate-400 mt-2">Atualizado há poucos minutos com base nos estoques oficiais.</p>
+                </div>
+
+                <div class="border-t border-b border-slate-800 py-4 my-6 flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-slate-400 block font-medium">Melhor preço encontrado:</span>
+                        <span id="productPrice" class="text-3xl font-black text-emerald-400 tracking-tight">R$ 0,00</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-slate-400 block font-medium">Análise de Mercado</span>
+                        <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg">Excelente Oportunidade</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <a href="#lojas" class="bg-blue-600 hover:bg-blue-500 active:scale-95 text-white px-6 py-3 rounded-2xl font-extrabold text-xs transition shadow-lg shadow-blue-600/30 flex items-center justify-center">
+                        Ver Lojas Oficiais Abaixo 👇
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- LISTA DE LOJAS REAIS -->
+        <div id="lojas" class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-xl mb-10">
+            <h2 class="text-lg font-bold text-white mb-6">Lojas Oficiais com Estoque Disponível</h2>
+
+            <div class="space-y-4">
+                <!-- LOJA 1: MAGAZINE LUIZA -->
+                <div class="flex flex-col sm:flex-row items-center justify-between border-2 border-emerald-500/50 bg-emerald-500/5 p-5 rounded-2xl gap-4">
+                    <div class="flex items-center gap-4 w-full sm:w-auto">
+                        <div class="w-28 h-12 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-center font-extrabold text-xs text-blue-400">
+                            MAGALU
+                        </div>
+                        <div>
+                            <span class="bg-emerald-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider">Menor Preço</span>
+                            <h3 class="font-bold text-white text-sm mt-1">Magazine Luiza</h3>
+                            <p class="text-xs text-slate-400">Frete: <span class="text-emerald-400 font-bold">Consulte no site</span></p>
+                        </div>
+                    </div>
+                    <div class="text-center sm:text-right w-full sm:w-auto">
+                        <span class="text-xs text-slate-400 block">À vista no Pix</span>
+                        <span id="magaluPrice" class="text-2xl font-black text-white">R$ 0,00</span>
+                    </div>
+                    <a id="magaluLink" href="https://www.magazineluiza.com.br" target="_blank" class="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 text-center px-6 py-3 rounded-xl font-extrabold text-xs transition shadow-lg shadow-emerald-500/20">
+                        Ir para a Loja Oficial ➔
+                    </a>
+                </div>
+
+                <!-- LOJA 2: AMAZON BRASIL -->
+                <div class="flex flex-col sm:flex-row items-center justify-between border border-slate-800 bg-slate-950/40 p-5 rounded-2xl gap-4 hover:border-slate-700 transition">
+                    <div class="flex items-center gap-4 w-full sm:w-auto">
+                        <div class="w-28 h-12 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-center font-extrabold text-xs text-amber-400">
+                            AMAZON
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-sm">Amazon Brasil</h3>
+                            <p class="text-xs text-slate-400">Frete Grátis para membros Prime</p>
+                        </div>
+                    </div>
+                    <div class="text-center sm:text-right w-full sm:w-auto">
+                        <span class="text-xs text-slate-400 block">À vista / Parcelado</span>
+                        <span id="amazonPrice" class="text-xl font-bold text-white">R$ 0,00</span>
+                    </div>
+                    <a id="amazonLink" href="https://www.amazon.com.br" target="_blank" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 active:scale-95 text-white text-center px-6 py-3 rounded-xl font-bold text-xs transition">
+                        Ir para a Loja Oficial ➔
+                    </a>
+                </div>
+
+                <!-- LOJA 3: MERCADO LIVRE -->
+                <div class="flex flex-col sm:flex-row items-center justify-between border border-slate-800 bg-slate-950/40 p-5 rounded-2xl gap-4 hover:border-slate-700 transition">
+                    <div class="flex items-center gap-4 w-full sm:w-auto">
+                        <div class="w-28 h-12 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-center font-extrabold text-xs text-yellow-400">
+                            MERCADO LIVRE
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-sm">Mercado Livre</h3>
+                            <p class="text-xs text-slate-400">Envio Full (Mais rápido do Brasil)</p>
+                        </div>
+                    </div>
+                    <div class="text-cen
