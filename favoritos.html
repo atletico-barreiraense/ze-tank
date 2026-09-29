@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Favoritos - CompraTudo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+    <!-- HEADER -->
+    <header class="bg-blue-600 text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="index.html" class="text-2xl font-black tracking-wider flex items-center gap-1">
+                COMPARA<span class="text-yellow-400">TUDO</span>
+            </a>
+            <div class="text-sm font-medium flex items-center gap-6">
+                <a href="index.html" class="hover:text-yellow-300 transition">← Voltar para a Home</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-2xl font-black text-gray-800 mb-6">Meus Produtos Favoritos 🤍</h1>
+
+        <!-- Onde os favoritos salvos vão aparecer -->
+        <div id="favoritesList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Inserido via JavaScript -->
+        </div>
+
+        <!-- Estado vazio -->
+        <div id="emptyFavorites" class="hidden text-center py-20">
+            <p class="text-5xl mb-3">📂</p>
+            <p class="text-gray-600 font-bold text-lg">Sua lista de favoritos está vazia.</p>
+            <p class="text-gray-400 text-sm mt-1">Clique no coraçãozinho nos produtos da página inicial para salvá-los aqui!</p>
+            <a href="index.html" class="inline-block mt-6 bg-blue-600 text-white font-bold px-6 py-2.5 rounded-xl hover:bg-blue-700 transition">Explorar Produtos</a>
+        </div>
+    </main>
+
+    <script>
+        // Carrega favoritos salvos no navegador (localStorage)
+        const favoritesList = document.getElementById('favoritesList');
+        const emptyFavorites = document.getElementById('emptyFavorites');
+        
+        // Exemplo simulado de dados de produtos salvos
+        const allProductsData = {
+            's23': { name: 'Smartphone Samsung Galaxy S23 5G 128GB Câmera Tripla', price: 'R$ 3.899,00', discount: '-15%', link: 'produto.html' },
+            'dell': { name: 'Notebook Dell Inspiron 15 Core i5 8GB SSD 256GB', price: 'R$ 3.199,00', discount: '', link: 'produto.html' },
+            'tv': { name: 'Smart TV 50" Crystal UHD 4K Samsung', price: 'R$ 2.239,00', discount: '-20%', link: 'produto.html' },
+            'ps5': { name: 'Console Sony PlayStation 5 Slim 1TB', price: 'R$ 3.699,00', discount: '', link: 'produto.html' }
+        };
+
+        let savedFavs = JSON.parse(localStorage.getItem('compraTudoFavs')) || [];
+
+        if (savedFavs.length === 0) {
+            emptyFavorites.classList.remove('hidden');
+        } else {
+            savedFavs.forEach(id => {
+                const prod = allProductsData[id];
+                if (prod) {
+                    favoritesList.innerHTML += `
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col justify-between p-4">
+                            <div>
+                                <div class="h-40 bg-gray-100 rounded-xl flex items-center justify-center relative mb-3">
+                                    <span class="text-gray-400 text-xs">Foto do Produto</span>
+                                    ${prod.discount ? `<span class="absolute top-2 left-2 bg-red-500 text-white text-[10px] px-2 py-0.5 rounded font-bold">${prod.discount}</span>` : ''}
+                                </div>
+                                <h3 class="font-bold text-sm text-gray-800 line-clamp-2 mb-2">${prod.name}</h3>
+                                <p class="text-xs text-gray-500">A partir de:</p>
+                                <p class="text-xl font-black text-blue-600">${prod.price}</p>
+                            </div>
+                            <div class="mt-4 flex gap-2">
+                                <a href="${prod.link}" class="flex-1 bg-blue-600 text-white text-center py-2 rounded-xl font-bold text-xs hover:bg-blue-700 transition">Ver Ofertas</a>
+                                <button onclick="removeFav('${id}')" class="bg-gray-100 text-gray-500 px-3 py-2 rounded-xl text-xs hover:bg-red-50 hover:text-red-500 transition">❌</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        function removeFav(id) {
+            savedFavs = savedFavs.filter(item => item !== id);
+            localStorage.setItem('compraTudoFavs', JSON.stringify(savedFavs));
+            location.reload();
+        }
+    </script>
+</body>
+</html>
