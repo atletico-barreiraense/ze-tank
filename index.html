@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComparaTudo — O Melhor Comparador de Preços do Brasil</title>
+    <!-- Tailwind CSS com fontes customizadas -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 antialiased selection:bg-amber-400 selection:text-slate-950">
+
+    <!-- TOAST DE NOTIFICAÇÃO FLUTUANTE -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-800 border border-slate-700 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
+        <span id="toastIcon" class="text-xl">✨</span>
+        <div>
+            <p id="toastTitle" class="font-bold text-sm">Aviso</p>
+            <p id="toastDesc" class="text-xs text-slate-400">Mensagem descritiva aqui</p>
+        </div>
+    </div>
+
+    <!-- HEADER / NAVEGAÇÃO PREMIUM -->
+    <header class="glass-header border-b border-slate-200/20 sticky top-0 z-50 transition-all">
+        <div class="container mx-auto px-4 h-20 flex items-center justify-between gap-4">
+            <!-- Logo com Gradiente -->
+            <a href="index.html" class="text-2xl font-black tracking-tight flex items-center gap-2 group">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 group-hover:scale-105 transition">
+                    <span class="text-xl">⚡</span>
+                </div>
+                <span class="text-slate-900">COMPARA<span class="text-blue-600">TUDO</span></span>
+            </a>
+
+            <!-- Barra de Busca Central Moderna -->
+            <div class="hidden md:flex flex-1 max-w-xl relative">
+                <input type="text" id="searchInput" placeholder="O que você deseja comparar hoje? (Ex: S23, PS5, TV...)" class="w-full h-12 pl-12 pr-28 rounded-2xl bg-slate-100 border border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-600 transition-all shadow-inner">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg">🔍</span>
+                <button id="searchBtn" class="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white px-5 rounded-xl font-bold text-xs transition shadow-md shadow-blue-600/30">
+                    Buscar
+                </button>
+            </div>
+
+            <!-- Links de Ação Rápida -->
+            <div class="flex items-center gap-3">
+                <a href="favoritos.html" class="relative flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200/80 text-slate-700 font-bold text-xs transition border border-slate-200/60">
+                    <span>🤍</span>
+                    <span class="hidden sm:inline">Favoritos</span>
+                    <span id="favCount" class="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-md shadow-rose-500/40 hidden">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- BARRA DE CATEGORIAS COM BADGES ESTILO PILL -->
+    <div class="bg-slate-900 border-b border-slate-800 sticky top-20 z-40">
+        <div class="container mx-auto px-4 py-3.5 flex gap-3 overflow-x-auto scrollbar-none">
+            <button onclick="filterCategory('todos')" class="cat-btn active px-4 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs whitespace-nowrap shadow-md shadow-blue-600/30 transition">🔥 Todos os Produtos</button>
+            <button onclick="filterCategory('celular')" class="cat-btn px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs whitespace-nowrap transition border border-slate-700">📱 Celulares</button>
+            <button onclick="filterCategory('notebook')" class="cat-btn px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs whitespace-nowrap transition border border-slate-700">💻 Notebooks</button>
+            <button onclick="filterCategory('tv')" class="cat-btn px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs whitespace-nowrap transition border border-slate-700">📺 Smart TVs</button>
+            <button onclick="filterCategory('game')" class="cat-btn px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs whitespace-nowrap transition border border-slate-700">🎮 Games & Consoles</button>
+        </div>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="container mx-auto px-4 py-10">
+        
+        <!-- HERO BANNER PREMIUM COM CONTAGEM REGRESSIVA -->
+        <div class="relative rounded-3xl bg-gradient-to-br from-blue-700 via-indigo-800 to-slate-900 p-8 md:p-12 text-white mb-12 shadow-2xl overflow-hidden border border-blue-500/20">
+            <!-- Detalhes de luz de fundo -->
+            <div class="absolute -right-20 -top-20 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute right-40 bottom-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="relative z-10 max-w-2xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 text-xs font-bold mb-4 tracking-wide uppercase">
+                    <span>⚡ Mega Comparador 2026</span>
+                </div>
+                <h1 class="text-3xl md:text-5xl font-black tracking-tight leading-tight mb-4">
+                    O menor preço da internet, <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-500">rastreado em tempo real.</span>
+                </h1>
+                <p class="text-slate-300 text-sm md:text-base mb-8 leading-relaxed">
+                    Monitoramos milhares de lojas oficiais para garantir que você pague o valor mais baixo do mercado.
+                </p>
+                <div class="flex flex-wrap items-center gap-4">
+                    <a href="#produtos" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold px-7 py-3.5 rounded-2xl shadow-lg shadow-amber-400/25 transition-all hover:scale-105 active:scale-95 text-sm">
+                        Explorar Ofertas
+                    </a>
+                    <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="text-xs font-medium text-slate-300">Mais de 4.500 produtos monitorados hoje</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CABEÇALHO DA SEÇÃO DE PRODUTOS -->
+        <div id="produtos" class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+            <div>
+                <h2 class="text-2xl font-black text-white tracking-tight">Tendências de Preço</h2>
+                <p class="text-xs text-slate-400 mt-1">Produtos com queda de preço registrada nas últimas horas</p>
+            </div>
+            
+            <!-- Ordenação simulada -->
+            <div class="flex items-center gap-2 bg-slate-800 border border-slate-700/80 px-4 py-2 rounded-2xl text-xs font-semibold text-slate-300">
+                <span>Ordenar por:</span>
+                <select class="bg-transparent text-white focus:outline-none font-bold cursor-pointer">
+                    <option class="bg-slate-800">Menor Preço</option>
+                    <option class="bg-slate-800">Maior Desconto</option>
+                    <option class="bg-slate-800">Mais Populares</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- GRID DE PRODUTOS ULTRA POLIDO -->
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+            <!-- CARD 1 (S23) -->
+            <div class="product-card bg-slate-800/80 backdrop-blur-sm rounded-3xl border border-slate-700/70 overflow-hidden hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1 transition duration-300 flex flex-col justify-between group" data-category="celular" data-name="smartphone samsung galaxy s23 5g" data-id="s23">
+                <div>
+                    <!-- Imagem e Badges -->
+                    <div class="h-56 bg-slate-900/60 flex items-center justify-center relative overflow-hidden p-6">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
+                        <span class="text-slate-500 text-xs font-semibold tracking-wide group-hover:scale-105 transition duration-500">Foto do Produto</span>
+                        
+                        <span class="absolute top-4 left-4 bg-gradient-to-r from-rose-500 to-pink-600 text-white text-[11px] px-3 py-1 rounded-xl font-extrabold shadow-lg shadow-rose-500/30">
+                            -15% OFF
+                        </span>
+                        
+                        <button onclick="toggleFavorite(event, this, 's23')" class="fav-btn absolute top-4 right-4 w-9 h-9 bg-slate-800/80 hover:bg-slate-700 border border-slate-700 backdrop-blur rounded-2xl flex items-center justify-center text-slate-400 hover:text-rose-400 hover:scale-110 active:scale-90 transition shadow-lg z-10">
+                            🤍
+                        </button>
+                    </div>
+                    
+                    <!-- Conteúdo -->
+                    <div class="p-6">
+                        <div class="flex items-center gap-1.5 text-amber-400 text-xs mb-2.5">
+                            ★★★★★ <span class="text-slate-400 text-[11px] font-medium ml-1">(128 avaliações)</span>
+                        </div>
+                        <h3 class="text-white font-bold text-sm leading-snug line-clamp-2 group-hover:text-blue-400 transition mb-3">
+                            Smartphone Samsung Galaxy S23 5G 128GB Câmera Tripla
+                        </h3>
+                        <p class="text-slate-500 text-xs line-through">R$ 4.599,00</p>
+                        <div class="flex items-baseline justify-between mt-1">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">Melhor preço</span>
+                                <span class="text-2xl font-black text-emerald-400 tracking-tight">R$ 3.899,00</span>
+                            </div>
+                            <span class="text-[11px] font-bold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-1 rounded-lg">5 lojas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 pt-0">
+                    <a href="produto.html" class="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white text-center py-3 rounded-2xl font-extrabold text-xs transition shadow-lg shadow-blue-600/30">
+                        <span>Comparar Lojas</span>
+                        <span>→</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- CARD 2 (DELL) -->
+            <div class="product-card bg-slate-800/80 backdrop-blur-sm rounded-3xl border border-slate-700/70 overflow-hidden hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1 transition duration-300 flex flex-col justify-between group" data-category="notebook" data-name="notebook dell inspiron 15 core i5" data-id="dell">
+                <div>
+                    <div class="h-56 bg-slate-900/60 flex items-center justify-center relative overflow-hidden p-6">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
+                        <span class="text-slate-500 text-xs font-semibold tracking-wide group-hover:scale-105 transition duration-500">Foto do Produto</span>
+                        
+                        <button onclick="toggleFavorite(event, this, 'dell')" class="fav-btn absolute top-4 right-4 w-9 h-9 bg-slate-800/80 hover:bg-slate-700 border border-slate-700 backdrop-blur rounded-2xl flex items-center justify-center text-slate-400 hover:text-rose-400 hover:scale-110 active:scale-90 transition shadow-lg z-10">
+                            🤍
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-1.5 text-amber-400 text-xs mb-2.5">
+                            ★★★★☆ <span class="text-slate-400 text-[11px] font-medium ml-1">(45 avaliações)</span>
+                        </div>
+                        <h3 class="text-white font-bold text-sm leading-snug line-clamp-2 group-hover:text-blue-400 transition mb-3">
+                            Notebook Dell Inspiron 15 Core i5 8GB SSD 256GB
+                        </h3>
+                        <p class="text-slate-500 text-xs line-through opacity-0">.</p>
+                        <div class="flex items-baseline justify-between mt-1">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">Melhor preço</span>
+                                <span class="text-2xl font-black text-emerald-400 tracking-tight">R$ 3.199,00</span>
+                            </div>
+                            <span class="text-[11px] font-bold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-1 rounded-lg">3 lojas</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 pt-0">
+                    <a href="produto.html" class="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white text-center py-3 rounded-2xl font-extrabold text-xs transition shadow-lg shadow-blue-600/30">
+                        <span>Comparar Lojas</span>
+                        <span>→</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- CARD 3 (TV) -->
+            <div class="product-card bg-slate-800/80 backdrop-blur-sm rounded-3xl border border-slate-700/70 overflow-hidden hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1 transition duration-300 flex flex-col justify-between group" data-category="tv" data-name="smart tv 50 crystal uhd 4k samsung" data-id="tv">
+                <div>
+                    <div class="h-56 bg-slate-900/60 flex items-center justify-center relative overflow-hidden p-6">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
+                        <span class="text-slate-500 text-xs font-semibold tracking-wide group-hover:scale-105 transition duration-500">Foto do Produto</span>
+                        
+                        <span class="absolute top-4 left-4 bg-gradient-to-r from-rose-500 to-pink-600 text-white text-[11px] px-3 py-1 rounded-xl font-extrabold shadow-lg shadow-rose-500/30">
+                            -20% OFF
+                        </span>
+                        
+                        <button onclick="toggleFavorite(event, this, 'tv')" class="fav-btn absolute top-4 right-4 w-9 h-9 bg-slate-800/80 hover:bg-slate-700 border border-slate-700 backdrop-blur rounded-2xl flex items-center justify-center text-slate-400 hover:text-rose-400 hover:scale-110 active:scale-90 transition shadow-lg z-10">
+                            🤍
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-1.5 text-amber-400 text-xs mb-2.5">
+                            ★★★★★ <span class="text-slate-400 text-[11px] font-medium ml-1">(310 avaliações)</span>
+                        </div>
+                        <h3 class="text-white font-bold text-sm leading-snug line-clamp-2 group-hover:text-blue-400 transition mb-3">
+                            Smart TV 50" Crystal UHD 4K Samsung
+                        </h3>
+                        <p class="text-slate-500 text-xs line-through">R$ 2.799,00</p>
+                        <div class="flex items-baseline justify-between mt-1">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">Melhor preço</span>
+                                <span class="text-2xl font-black text-emerald-400 tracking-tight">R$ 2.239,00</span>
+                            </div>
+                            <span class="text-[11px] font-bold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-1 rounded-lg">8 lojas</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 pt-0">
+                    <a href="produto.html" class="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white text-center py-3 rounded-2xl font-extrabold text-xs transition shadow-lg shadow-blue-600/30">
+                        <span>Comparar Lojas</span>
+                        <span>→</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- CARD 4 (PS5) -->
+            <div class="product-card bg-slate-800/80 backdrop-blur-sm rounded-3xl border border-slate-700/70 overflow-hidden hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1 transition duration-300 flex flex-col justify-between group" data-category="game" data-name="console sony playstation 5 slim 1tb" data-id="ps5">
+                <div>
+                    <div class="h-56 bg-slate-900/60 flex items-center justify-center relative overflow-hidden p-6">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
+                        <span class="text-slate-500 text-xs font-semibold tracking-wide group-hover:scale-105 transition duration-500">Foto do Produto</span>
+                        
+                        <button onclick="toggleFavorite(event, this, 'ps5')" class="fav-btn absolute top-4 right-4 w-9 h-9 bg-slate-800/80 hover:bg-slate-700 border border-slate-700 backdrop-blur rounded-2xl flex items-center justify-center text-slate-400 hover:text-rose-400 hover:scale-110 active:scale-90 transition shadow-lg z-10">
+                            🤍
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-1.5 text-amber-400 text-xs mb-2.5">
+                            ★★★★★ <span class="text-slate-400 text-[11px] font-medium ml-1">(89 avaliações)</span>
+                        </div>
+                        <h3 class="text-white font-bold text-sm leading-snug line-clamp-2 group-hover:text-blue-400 transition mb-3">
+                            Console Sony PlayStation 5 Slim 1TB
+                        </h3>
+                        <p class="text-slate-500 text-xs line-through opacity-0">.</p>
+                        <div class="flex items-baseline justify-between mt-1">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">Melhor preço</span>
+                                <span class="text-2xl font-black text-emerald-400 tracking-tight">R$ 3.699,00</span>
+                            </div>
+                            <span class="text-[11px] font-bold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-1 rounded-lg">4 lojas</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 pt-0">
+                    <a href="produto.html" class="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white text-center py-3 rounded-2xl font-extrabold text-xs transition shadow-lg shadow-blue-600/30">
+                        <span>Comparar Lojas</span>
+                        <span>→</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Mensagem de Nenhum Produto Encontrado -->
+        <div id="noResults" class="hidden text-center py-20">
+            <div class="w-16 h-16 bg-slate-800 border border-slate-700 rounded-3xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner">🔍</div>
+            <p class="text-white font-bold text-lg">Nenhum produto encontrado</p>
+            <p class="text-slate-400 text-sm mt-1">Tente buscar por outro termo ou categoria na barra superior.</p>
+        </div>
+    </main>
+
+    <!-- FOOTER PREMIUM -->
+    <footer class="bg-slate-950 border-t border-slate-800 text-slate-400 text-xs py-16 mt-20">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+            <div>
+                <a href="index.html" class="text-xl font-black text-white tracking-tight flex items-center gap-2 mb-4">
+                    <div class="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white">⚡</div>
+                    <span>COMPARA<span class="text-blue-500">TUDO</span></span>
+                </a>
+                <p class="text-slate-500 leading-relaxed">Sua plataforma inteligente de comparação de preços. Economize tempo e dinheiro em cada compra.</p>
+            </div>
+            <div>
+                <h4 class="font-bold text-white mb-4 text-sm tracking-wide">Links Rápidos</h4>
+                <ul class="space-y-2.5">
+                    <li><a href="#" class="hover:text-white transition">Sobre a Empresa</a></li>
+                    <li><a href="#" class="hover:text-white transition">Como rastreamos os preços</a></li>
+                    <li><a href="#" class="hover:text-white transition">Termos de Uso</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-white mb-4 text-sm tracking-wide">Categorias</h4>
+                <ul class="space-y-2.5">
+                    <li><a href="#" class="hover:text-white transition">Smartphones 5G</a></li>
+                    <li><a href="#" class="hover:text-white transition">Notebooks de Alta Performance</a></li>
+                    <li><a href="#" class="hover:text-white transition">Smart TVs 4K e 8K</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-white mb-4 text-sm tracking-wide">Segurança & Confiabilidade</h4>
+                <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800/80">
+                    <p class="text-slate-300 font-bold mb-1">100% Verificado</p>
+                    <p class="text-[11px] text-slate-500">Trabalhamos apenas com lojas oficiais e parceiros homologados do e-commerce brasileiro.</p>
+                </div>
+            </div>
+        </div>
+        <div class="container mx-auto px-4 border-t border-slate-900 pt-8 text-center text-slate-600">
+            &copy; 2026 CompraTudo Tecnologia S.A. Todos os direitos reservados.
+        </div>
+    </footer>
+
+    <!-- SCRIPTS DE INTERATIVIDADE E TOAST -->
+    <script>
+        let savedFavs = JSON.parse(localStorage.getItem('compraTudoFavs')) || [];
+
+        function updateFavBadge() {
+            const badge = document.getElementById('favCount');
+            badge.innerText = savedFavs.length;
+            if (savedFavs.length > 0) {
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        // Inicializa corações salvos
+        document.querySelectorAll('.product-card').forEach(card => {
+            const id = card.getAttribute('data-id');
+            const btn = card.querySelector('.fav-btn');
+            if (savedFavs.includes(id)) {
+                btn.classList.add('text-rose-400', 'bg-rose-500/10', 'border-rose-500/30');
+                btn.innerHTML = '❤️';
+            }
+        });
+        updateFavBadge();
+
+        // Sistema de Toast Moderno
+        function showToast(title, desc, icon = '✨') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastTitle').innerText = title;
+            document.getElementById('toastDesc').innerText = desc;
+            document.getElementById('toastIcon').innerText = icon;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function toggleFavorite(event, btn, id) {
+            event.stopPropagation();
+            const index = savedFavs.indexOf(id);
+            
+            if (index > -1) {
+                savedFavs.splice(index, 1);
+                btn.classList.remove('text-rose-400', 'bg-rose-500/10', 'border-rose-500/30');
+                btn.innerHTML = '🤍';
+                showToast('Removido', 'Produto retirado dos seus favoritos.', '🗑️');
+            } else {
+                savedFavs.push(id);
+                btn.classList.add('text-rose-400', 'bg-rose-500/10', 'border-rose-500/30');
+                btn.innerHTML = '❤️';
+                showToast('Salvo com sucesso!', 'Produto adicionado à sua lista de favoritos.', '💖');
+            }
+            
+            localStorage.setItem('compraTudoFavs', JSON.stringify(savedFavs));
+            updateFavBadge();
+        }
+
+        // Busca Inteligente
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const productCards = document.querySelectorAll('.product-card');
+        const noResults = document.getElementById('noResults');
+
+        function performSearch() {
+            const query = searchInput.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            productCards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                if (name.includes(query)) {
+                    card.style.display = "flex";
+                    card.classList.add('animate-fade-in');
+                    visibleCount++;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            noResults.classList.toggle('hidden', visibleCount > 0);
+        }
+
+        searchInput.addEventListener('input', performSearch);
+        searchBtn.addEventListener('click', performSearch);
+
+        // Filtro de Categorias Ativas
+        function filterCategory(category) {
+            searchInput.value = "";
+            let visibleCount = 0;
+
+            // Atualiza botões de categoria visualmente
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md', 'shadow-blue-600/30');
+                btn.classList.add('bg-slate-800', 'text-slate-300', 'border', 'border-slate-700');
+            });
+            event.currentTarget.classList.remove('bg-slate-800', 'text-slate-300', 'border', 'border-slate-700');
+            event.currentTarget.classList.add('bg-blue-600', 'text-white', 'shadow-md', 'shadow-blue-600/30');
+
+            productCards.forEach(card => {
+                const cardCat = card.getAttribute('data-category');
+                if (category === 'todos' || cardCat === category) {
+                    card.style.display = "flex";
+                    visibleCount++;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+            noResults.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
